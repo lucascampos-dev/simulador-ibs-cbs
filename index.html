@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Simulador IBS/CBS — Reforma Tributária do Consumo</title>
+  <meta name="description" content="Simulador educacional do impacto da Reforma Tributária do Consumo (IBS/CBS) ano a ano, de 2026 a 2033, com base na EC 132/2023 e na LC 214/2025.">
+  <meta name="author" content="Lucas Campos">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/styles.css">
+  <script type="module" src="src/app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#resultados">Pular para os resultados</a>
+
+  <header class="hero">
+    <div class="wrap">
+      <p class="eyebrow">EC 132/2023 · LC 214/2025 · Transição 2026–2033</p>
+      <h1>Simulador da Reforma Tributária do Consumo <span class="nowrap">(IBS/CBS)</span></h1>
+      <p class="lead">Compare, ano a ano, a carga de PIS/Cofins, ICMS, ISS e IPI com a do novo IVA dual — CBS federal e IBS estadual/municipal, não cumulativos e cobrados “por fora”.</p>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <aside class="disclaimer" role="note" aria-label="Aviso importante">
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 2 1 21h22L12 2Zm0 5.5 7.5 12.5h-15L12 7.5ZM11 10v5h2v-5h-2Zm0 6v2h2v-2h-2Z"/></svg>
+      <p><strong>Estimativa educacional, não é consultoria tributária.</strong> As alíquotas de referência de IBS e CBS ainda serão fixadas por resolução do Senado Federal e diversos pontos dependem de regulamentação. Os resultados usam premissas simplificadas (documentadas abaixo) e não substituem a análise de um profissional com os dados reais da empresa.</p>
+    </aside>
+  </div>
+
+  <main class="wrap layout">
+    <form id="form" class="panel form" novalidate aria-describedby="form-help">
+      <h2 class="panel-title">Dados da empresa</h2>
+      <p id="form-help" class="help">Valores anuais em reais. Os resultados são recalculados automaticamente.</p>
+
+      <fieldset>
+        <legend>Regime atual</legend>
+        <label for="regime">Regime de apuração</label>
+        <select id="regime" name="regime">
+          <option value="real">Lucro Real — PIS/Cofins não cumulativo (9,25%)</option>
+          <option value="presumido">Lucro Presumido — PIS/Cofins cumulativo (3,65%)</option>
+          <option value="simples">Simples Nacional (modelo simplificado)</option>
+        </select>
+
+        <div class="only-simples" hidden>
+          <div class="grid2">
+            <div>
+              <label for="aliquotaDAS">Alíquota efetiva do DAS (%)</label>
+              <input id="aliquotaDAS" name="aliquotaDAS" type="number" min="0" max="100" step="0.01" inputmode="decimal">
+            </div>
+            <div>
+              <label for="simplesOpcao">IBS/CBS a partir de 2027</label>
+              <select id="simplesOpcao" name="simplesOpcao">
+                <option value="dentro">Dentro do DAS</option>
+                <option value="fora">Por fora (regime regular)</option>
+              </select>
+            </div>
+            <div>
+              <label for="dasPisCofinsPct">Parcela PIS/Cofins no DAS (%)</label>
+              <input id="dasPisCofinsPct" name="dasPisCofinsPct" type="number" min="0" max="100" step="0.1" inputmode="decimal">
+            </div>
+            <div>
+              <label for="dasIcmsIssPct">Parcela ICMS/ISS no DAS (%)</label>
+              <input id="dasIcmsIssPct" name="dasIcmsIssPct" type="number" min="0" max="100" step="0.1" inputmode="decimal">
+            </div>
+          </div>
+          <p class="hint">Padrões da 1ª faixa do Anexo I da LC 123/2006 (Cofins 12,74% + PIS 2,76%; ICMS 34%). Ajuste ao anexo/faixa da empresa.</p>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Receitas anuais</legend>
+        <div class="grid2">
+          <div>
+            <label for="receitaBens">Venda de mercadorias (R$)</label>
+            <input id="receitaBens" name="receitaBens" type="number" min="0" step="1000" inputmode="numeric">
+          </div>
+          <div>
+            <label for="receitaServicos">Prestação de serviços (R$)</label>
+            <input id="receitaServicos" name="receitaServicos" type="number" min="0" step="1000" inputmode="numeric">
+          </div>
+        </div>
+        <p class="hint">Receita bruta atual, com os tributos “por dentro” (sem IPI).</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Custos</legend>
+        <div class="grid2">
+          <div>
+            <label for="compras">Compras que geram crédito (R$)</label>
+            <input id="compras" name="compras" type="number" min="0" step="1000" inputmode="numeric">
+          </div>
+          <div>
+            <label for="folha">Folha de pagamento (R$)</label>
+            <input id="folha" name="folha" type="number" min="0" step="1000" inputmode="numeric">
+          </div>
+        </div>
+        <div class="only-real">
+          <label for="creditoPisCofinsAtualPct">Parte dessas compras que já gera crédito de PIS/Cofins hoje (%)</label>
+          <input id="creditoPisCofinsAtualPct" name="creditoPisCofinsAtualPct" type="number" min="0" max="100" step="1" inputmode="decimal">
+        </div>
+        <p class="hint">Mercadorias, insumos, serviços, energia, aluguéis e demais aquisições. A folha não gera crédito de IBS/CBS.</p>
+      </fieldset>
+
+      <fieldset class="not-simples">
+        <legend>Tributos atuais</legend>
+        <div class="grid3">
+          <div>
+            <label for="icmsEfetivo">ICMS (%)</label>
+            <input id="icmsEfetivo" name="icmsEfetivo" type="number" min="0" max="99" step="0.1" inputmode="decimal" aria-describedby="icms-hint">
+          </div>
+          <div>
+            <label for="issAliquota">ISS (%)</label>
+            <input id="issAliquota" name="issAliquota" type="number" min="0" max="5" step="0.1" inputmode="decimal">
+          </div>
+          <div>
+            <label for="ipiEfetivo">IPI (%)</label>
+            <input id="ipiEfetivo" name="ipiEfetivo" type="number" min="0" max="100" step="0.1" inputmode="decimal">
+          </div>
+        </div>
+        <p id="icms-hint" class="hint">Alíquotas efetivas: ICMS e IPI a recolher (já descontados os créditos) ÷ receita de mercadorias.</p>
+        <label class="check"><input id="excluirIcmsBasePisCofins" name="excluirIcmsBasePisCofins" type="checkbox"> Excluir o ICMS da base do PIS/Cofins (STF, Tema 69)</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Parâmetros da reforma</legend>
+        <label for="reducao">Tratamento das suas vendas</label>
+        <select id="reducao" name="reducao">
+          <option value="nenhuma">Alíquota padrão (sem redução)</option>
+          <option value="r30">Redução de 30% — profissões intelectuais (art. 127)</option>
+          <option value="r60">Redução de 60% — saúde, educação, alimentos etc. (art. 128)</option>
+          <option value="zero">Alíquota zero — ex.: Cesta Básica Nacional (art. 125)</option>
+        </select>
+
+        <label for="preset">Estimativa de alíquota de referência</label>
+        <select id="preset" name="preset">
+          <option value="cgibs2026">Resolução CGIBS nº 14/2026 — 27,91%</option>
+          <option value="sert2024">Estimativa inicial SERT/MF (2024) — 26,5%</option>
+          <option value="custom">Personalizada</option>
+        </select>
+        <div class="grid2">
+          <div>
+            <label for="cbsRef">CBS de referência (%)</label>
+            <input id="cbsRef" name="cbsRef" type="number" min="0" max="40" step="0.01" inputmode="decimal">
+          </div>
+          <div>
+            <label for="ibsRef">IBS de referência (%)</label>
+            <input id="ibsRef" name="ibsRef" type="number" min="0" max="40" step="0.01" inputmode="decimal">
+          </div>
+        </div>
+        <p class="hint"><span class="tag">Premissa</span> Valores estimados; as alíquotas oficiais serão fixadas pelo Senado (ADCT, art. 130).</p>
+      </fieldset>
+
+      <details class="advanced">
+        <summary>Premissas avançadas</summary>
+        <label for="creditoComprasPct">Crédito efetivo sobre compras (% da alíquota padrão)</label>
+        <input id="creditoComprasPct" name="creditoComprasPct" type="number" min="0" max="100" step="1" inputmode="decimal">
+        <p class="hint">Reduza se parte das compras vier de fornecedores do Simples ou com alíquota reduzida.</p>
+        <label class="check"><input id="manterCreditosAliquotaZero" name="manterCreditosAliquotaZero" type="checkbox"> Manter créditos das compras em vendas com alíquota zero</label>
+        <label class="check"><input id="ibsCbsNaBaseIcms" name="ibsCbsNaBaseIcms" type="checkbox"> Incluir IBS/CBS na base do ICMS/ISS (2027–2032)</label>
+        <label class="check not-simples"><input id="ipiZonaFranca" name="ipiZonaFranca" type="checkbox"> Produto com IPI mantido (Zona Franca de Manaus)</label>
+      </details>
+
+      <div class="form-actions">
+        <button type="button" id="reset" class="btn ghost">Restaurar exemplo</button>
+      </div>
+      <p id="erro" class="erro" role="alert" hidden></p>
+    </form>
+
+    <section id="resultados" class="results" aria-live="polite" aria-labelledby="res-title">
+      <h2 id="res-title" class="sr-only">Resultados</h2>
+
+      <div class="print-only panel" id="premissas-print"></div>
+
+      <div class="kpis" id="kpis"></div>
+
+      <article class="panel">
+        <header class="panel-head">
+          <div>
+            <h3>Carga tributária líquida por ano</h3>
+            <p class="help">Tributos sobre consumo a recolher, já descontados os créditos, no cenário que mantém a sua margem em reais.</p>
+          </div>
+          <ul class="legend" aria-label="Legenda do gráfico">
+            <li><span class="sw sw-atual"></span>Sistema atual</li>
+            <li><span class="sw sw-legado"></span>Tributos antigos (reforma)</li>
+            <li><span class="sw sw-novo"></span>IBS/CBS líquido</li>
+          </ul>
+        </header>
+        <div class="chart" id="chart" role="img" aria-label="Gráfico de barras da carga tributária por ano"></div>
+        <div class="tooltip" id="tooltip" role="status" hidden></div>
+      </article>
+
+      <article class="panel">
+        <header class="panel-head">
+          <h3>Ano a ano</h3>
+          <div class="actions">
+            <button type="button" class="btn" id="csv">
+              <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M11 3h2v9.2l3.3-3.3 1.4 1.4L12 16l-5.7-5.7 1.4-1.4 3.3 3.3V3ZM4 18h16v2H4v-2Z"/></svg>
+              Exportar CSV
+            </button>
+            <button type="button" class="btn ghost" id="print">
+              <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M7 3h10v4H7V3Zm-2 6h14a2 2 0 0 1 2 2v6h-4v4H7v-4H3v-6a2 2 0 0 1 2-2Zm4 7v3h6v-3H9Z"/></svg>
+              Imprimir
+            </button>
+          </div>
+        </header>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="Tabela de resultados por ano">
+          <table id="tabela"></table>
+        </div>
+        <p class="help small">“Preço p/ manter margem”: variação do preço final ao cliente (com tributos) para preservar o resultado em R$. “Resultado c/ preço mantido”: efeito no resultado anual se o preço atual não mudar.</p>
+      </article>
+
+      <article class="panel">
+        <h3>Em linguagem simples</h3>
+        <div id="explicacao" class="prose"></div>
+        <ul id="avisos" class="avisos"></ul>
+      </article>
+
+      <article class="panel" id="metodologia">
+        <h3>Como o cálculo é feito</h3>
+        <div class="prose">
+          <p><strong>Sistema atual (linha de base):</strong> ICMS = alíquota efetiva × vendas de mercadorias; ISS = alíquota × serviços; PIS/Cofins = 9,25% (Lucro Real, com créditos sobre compras) ou 3,65% (Lucro Presumido) sobre a receita, com exclusão opcional do ICMS; IPI somado ao preço. No Simples, DAS = alíquota efetiva × receita.</p>
+          <p><strong>Reforma:</strong> IBS/CBS incidem “por fora” sobre o valor da operação sem ICMS/ISS (LC 214/2025, art. 12, § 2º). O crédito sobre compras considera o preço bruto das compras mantido, com IBS/CBS destacados nele: crédito = compras × t ÷ (1 + t). Nos anos de transição, ICMS/ISS são cobrados à fração do ADCT (90% em 2029 … 60% em 2032) e o IBS entra na proporção complementar da alíquota de referência.</p>
+          <p><strong>Dois cenários:</strong> (1) <em>manter margem</em> — calcula o valor líquido que preserva o resultado atual (receita sem tributos − compras líquidas de crédito − folha) e o preço final resultante; (2) <em>manter preço</em> — fixa o preço atual e mede o ganho ou a perda no resultado.</p>
+          <p><strong>Não modelado:</strong> Imposto Seletivo, regimes específicos (combustíveis, financeiros, imobiliário etc.), cashback, crédito presumido, diferencial de alíquotas entre estados, efeitos de fluxo de caixa do <em>split payment</em> e mudanças de preço dos fornecedores.</p>
+          <p><a href="https://github.com/lucasthobias/simulador-ibs-cbs#metodologia">Metodologia completa e fontes →</a></p>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-grid">
+      <div>
+        <h2>Base legal</h2>
+        <ul>
+          <li><a href="https://www.planalto.gov.br/ccivil_03/constituicao/emendas/emc/emc132.htm" rel="noopener">Emenda Constitucional nº 132/2023</a> — ADCT, arts. 125 a 130</li>
+          <li><a href="https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm" rel="noopener">Lei Complementar nº 214/2025</a> — IBS, CBS e Imposto Seletivo</li>
+          <li><a href="https://www.gov.br/receitafederal/pt-br/acesso-a-informacao/acoes-e-programas/programas-e-atividades/reforma-tributaria-do-consumo/entenda" rel="noopener">Receita Federal — Entenda a Reforma Tributária do Consumo</a></li>
+          <li><a href="https://www.cgibs.gov.br/upload/arquivos/202607/31144942-resoluc-ao-cgibs-n-14-de-29-de-julho-de-2026-proposta-percentual-ibs-cgibs-2027.pdf" rel="noopener">Resolução CGIBS nº 14/2026</a> — estimativa de 27,91%</li>
+        </ul>
+      </div>
+      <div>
+        <h2>Sobre</h2>
+        <p>Desenvolvido por <strong>Lucas Campos</strong>, desenvolvedor full-stack freelancer (WordPress, WooCommerce, Power Apps, Power BI).</p>
+        <p><a href="https://www.linkedin.com/in/lucas-campos-1146abab" rel="noopener">LinkedIn</a> · <a href="https://github.com/lucasthobias/simulador-ibs-cbs" rel="noopener">Código-fonte (MIT)</a></p>
+        <p class="small">Fontes consultadas em setembro de 2026. Código aberto sob licença MIT.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

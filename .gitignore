@@ -1,0 +1,18 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Local artifacts
+*.log
+.env
+coverage/
+test-results/
+playwright-report/
+*.csv

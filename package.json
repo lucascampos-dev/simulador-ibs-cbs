@@ -1,0 +1,16 @@
+{
+  "name": "simulador-ibs-cbs",
+  "version": "1.0.0",
+  "description": "Simulador educacional da Reforma Tributária do Consumo (IBS/CBS) — transição 2026–2033 (EC 132/2023 e LC 214/2025).",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node --test",
+    "start": "python3 -m http.server 8080"
+  },
+  "author": "Lucas Campos (https://github.com/lucasthobias)",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}
