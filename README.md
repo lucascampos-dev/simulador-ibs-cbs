@@ -4,7 +4,7 @@
 
 The tool turns the transition rules of Constitutional Amendment 132/2023 and Complementary Law 214/2025 into a tested calculation engine. It compares the current system (PIS/Cofins, ICMS, ISS, IPI) with the new dual VAT (CBS and IBS) for each year of the transition.
 
-**Live demo:** https://lucasthobias.github.io/simulador-ibs-cbs/
+**Live demo:** https://lucascampos-dev.github.io/simulador-ibs-cbs/
 
 ![Simulator screenshot](docs/screenshots/simulador.png)
 

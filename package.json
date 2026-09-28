@@ -8,7 +8,7 @@
     "test": "node --test",
     "start": "python3 -m http.server 8080"
   },
-  "author": "Lucas Campos (https://github.com/lucasthobias)",
+  "author": "Lucas Campos (https://github.com/lucascampos-dev)",
   "license": "MIT",
   "engines": {
     "node": ">=18"
